@@ -114,7 +114,8 @@ module.exports = async (client) => {
                 res.redirect(place);
             },
             userBots: botArr,
-            util: require("../utils/index")
+            util: require("../utils/index"),
+            realUser: await client.users.fetch(req.user.id)
         };
         res.render(path.resolve(`${templateDir}${path.sep}${template}`), Object.assign(baseData, data));
     };
