@@ -40,7 +40,8 @@ const Config = module.exports = {
         const mURL = await (await Channel.send({
             embeds: [
                 statusEmbed(bot, reason)
-            ]
+            ],
+            content: GuildSettings?.pingRole || "\u200b"
         })).url;
 
         await interaction.reply({

@@ -10,7 +10,7 @@ module.exports.msToDate = function millisToMinutesAndSeconds(millis) {
 
 const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
 const Discord = require('discord.js');
-const { colors, color } = require('../config')
+const { colors, color, website } = require('../config')
 const { Routes } = require('discord-api-types/v9');
 
 /**
@@ -124,6 +124,38 @@ module.exports.getColor = (presence={ status: "offline"}) => {
 }
 
 /**
+ * Gets usage from a command.
+ * @param {Discord.ApplicationCommand} command 
+ * @returns {String}
+ */
+module.exports.getUsage = (command) => {
+    let d = "";
+    command.options.forEach(e => {
+        d = + `${e.toJSON().required === true ? "<" : "["}${e.toJSON().name}${e.toJSON().required === true ? ">" : "]"}`
+    })
+    return d;
+};
+
+/**
+ * Gets an url for the status.
+ * @param {Discord.Presence} presence 
+ */
+ module.exports.getURL = (presence={ status: "offline"}) => {
+    if(!presence || presence == null) presence = { status: "offline"};
+    if(presence.status == "dnd"){
+        return "https://images.slashr.xyz/r/dnd.svg"
+    } else if(presence.status == "invisible" || presence.status == "offline"){
+        return "https://images.slashr.xyz/r/offline.svg"
+    } else if(presence.status == "online"){
+        return "https://images.slashr.xyz/r/online.svg"
+    } else if(presence.status == "idle"){
+        return "https://images.slashr.xyz/r/idle.svg"
+    } else {
+        return "https://images.slashr.xyz/r/online.svg"
+    }
+}
+
+/**
  * Gets an emoji for the status.
  * @param {Discord.Presence} presence 
  */
@@ -176,7 +208,8 @@ module.exports.categoryEmojis = {
     "Idle": "<:bl_idle:928358037104783380>",
     "Online": "<:bl_online:928364456835174400>",
     "Offline": "<:bl_offline:928364456608661574>",
-    "DND": "<:bl_dnd:928102999421747260>"
+    "DND": "<:bl_dnd:928102999421747260>",
+    "Crown": "<:premium:887893443957907456>"
 }
 
 const menuButtons = new MessageActionRow()
@@ -188,9 +221,14 @@ const menuButtons = new MessageActionRow()
             .setEmoji(this.categoryEmojis.Slash_Command),
         new MessageButton()
             .setCustomId(`tutorial`)
-            .setLabel("Tutorial")
+            .setLabel("About")
             .setStyle("SECONDARY")
-            .setEmoji(this.categoryEmojis.Rule_Book)
+            .setEmoji(this.categoryEmojis.Rule_Book),
+        new MessageButton()
+            .setURL(website + "invite")
+            .setLabel("Invite")
+            .setStyle("LINK")
+            .setEmoji(this.categoryEmojis.Member_Add)
     )
 /**
  * @param {"HELP"|"TUTORIAL"} type 
@@ -199,17 +237,17 @@ module.exports.getButton = (type) => {
     const menuButtonsv2 = new MessageActionRow()
         .addComponents(
             new MessageButton()
+            .setCustomId(`tutorial`)
+            .setLabel("About")
+            .setStyle("SECONDARY")
+            .setEmoji(this.categoryEmojis.Rule_Book),
+            new MessageButton()
                 .setCustomId(`help`)
                 .setLabel("Commands")
                 .setStyle("SECONDARY")
                 .setEmoji(this.categoryEmojis.Slash_Command),
             new MessageButton()
-                .setCustomId(`tutorial`)
-                .setLabel("Tutorial")
-                .setStyle("SECONDARY")
-                .setEmoji(this.categoryEmojis.Rule_Book),
-            new MessageButton()
-                .setURL(require('../index').client.get().generateInvite({ permissions: "ADMINISTRATOR", scopes: ["bot", "applications.commands"] }))
+                .setURL(website + "invite")
                 .setLabel("Invite")
                 .setStyle("LINK")
                 .setEmoji(this.categoryEmojis.Member_Add)
@@ -246,7 +284,7 @@ module.exports.awaitMenuButtons = async (interaction) => {
  * @returns {Discord.User}
  */
 module.exports.fetchOwner = (client) => {
-    const ownerID = require('../config.json').owners[0];
+    const ownerID = "820465204411236362";
     const owner = client.users.cache.get(ownerID);
 
     return owner

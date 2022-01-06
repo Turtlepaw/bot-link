@@ -54,6 +54,7 @@ client.noPerm = (perm) => {
 }
 
 client.on("ready", async () => {
+    await require("./Site/index")(client);
     const botSize = await (await require("./models/bot").find()).length;
     /** @type {Discord.TextChannel} */
     const channel = client.channels.cache.get("928099823947767848");
@@ -86,7 +87,12 @@ client.on("ready", async () => {
                     .setStyle("LINK")
                     .setEmoji("<:link:928103524800274563>")
                     .setLabel("Invite to another guild")
-                    .setURL(client.generateInvite({ scopes: ["bot", "applications.commands"], permissions: ["ADMINISTRATOR"] }))
+                    .setURL(client.generateInvite({ scopes: ["bot", "applications.commands"], permissions: ["ADMINISTRATOR"] })),
+                    new Discord.MessageButton()
+                    .setStyle("LINK")
+                    .setEmoji("<:link:928103524800274563>")
+                    .setLabel("Local Site")
+                    .setURL(`http://localhost:4321/`)
                 ]
             }
         ]

@@ -7,7 +7,8 @@ const sSchema = new mongoose.Schema({
     status: Object,
     private: Boolean,
     botName: String,
-    guilds: String|Number
+    guilds: String|Number,
+    userID: String
 });
 
 const sModel = module.exports = mongoose.model('bot', sSchema);

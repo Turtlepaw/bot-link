@@ -23,7 +23,8 @@ const Config = module.exports = {
             incidents: [],
             status: bot.presence,
             private: interaction.options.getBoolean("private")||false,
-            botName: bot.user.username.toLowerCase()
+            botName: bot.user.username.toLowerCase(),
+            userID: interaction.user.id
         }).save().catch(console.log);
 
         await interaction.reply({ embeds: [

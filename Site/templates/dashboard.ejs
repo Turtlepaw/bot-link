@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="css/index.css">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+<% if(!user){ %>
+    <% return redirect("/login") %>
+<% } %>
+<div class="text-center text-black main-page">
+    <div class="pb-12 top">
+        <div name="navigation" class="navigation">
+            <img src="round.png" class="h-full rounded-full">
+            <div class="nav-links text-white font-semibold">
+                <a href="/invite" target="_blank"
+                   class="a cursor-pointer">Invite Bot</a><a href="/dashboard"
+                                                                       class="a cursor-pointer">Dashboard</a><a href="/support"
+                                                                                                                         target="_blank" class="a cursor-pointer">Support</a><% if(user){ %> <a href="/logout" class="a cursor-pointer">Logout</a> <%}%><% if(!user){ %> <a href="/login" class="a cursor-pointer">Login</a> <%}%>
+            </div>
+        </div>
+        <div id="main" name="main" class="mt-10 text-white">
+
+            <h1 class="text-6xl font-bold align-middle white">Hey <%-user.username%>!</h1> 
+            <h1 class="text-6xl opacity-20 transform -translate-y-5 font-bold mb-2 align-middle">
+                <!-- <span class="opacity-0"></span> -->
+            </h1>
+            <p class="font-normal text-lg white">Welcome <%-user.username%> to the Bot Link dashboard!</p>
+            <br><br>
+            <a href="/invite" target="_blank" class="block bg-white text-black font-bold transition duration-200 shadow hover:shadow-2xl ease-in-and-out rounded-lg mx-auto mt-16 px-2 py-4 hover:text-red-800 text-xl font-sans w-60">Add bot
+            </a>
+            <br><br><br>
+        </div>
+    </div>
+            <div>
+        </div>
+    <div class="w-full mb-4 p-10">
+        <h1 class="text-6xl font-bold align-middle">Your Status Pages</h1> 
+        <div class="links grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-10 align-middle text-center">
+            <% for(const bot of userBots){ %>
+                <div class="sm:text-left link align-middle text-center">
+                    <div class="w-full pd-tailwnd sm:w-1/2 p-4 sm:p-8"><img class="rounded-lg  mx-auto small-img" src="<%- bot.userReal.displayAvatarURL() %> "></div>
+                    <div class="w-full sm:w-1/2 sm:p-8 feature-header botpage">
+                        <h1 class="font-bold text-5xl mb-3"><%=bot.userReal.tag%></h1>
+                        <p class="font-semibold text-lg"><img src="<%-util.getURL(bot.MGuild?.presence)%>" style="width: 20px;">              <%= bot.MGuild != null ? util.standardizeText(bot.MGuild.presence.status) : "Status Unknown" %> </p>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+<br><br><br>
