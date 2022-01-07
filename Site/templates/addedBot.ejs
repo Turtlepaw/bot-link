@@ -25,11 +25,19 @@
                         <h1 class="text-6xl opacity-20 transform -translate-y-5 font-bold mb-2 align-middle">
                             <!-- <span class="opacity-0"></span> -->
                         </h1>
-                        <% createBot() %>
+                        <% createBot().then(e => {
+                            this.errMessage = e
+                        }) %>
                         <p class="font-normal text-lg white">The bot has been created for <%-guild.name%></p>
+                        <p class="font-normal text-lg" style="color: #ed4245;" id="changeThis" ></p>
+                        <script>
+                            setTimeout(() => {
+                                document.getElementById("changeThis").innerText = "<%- this.errMessage %>"
+                            }, 700);
+                        </script>
                         <br><br>
                         <a href="/dashboard"
-                            class="block bg-white text-black font-bold transition duration-200 shadow hover:shadow-2xl ease-in-and-out rounded-lg mx-auto mt-16 px-2 py-4 hover:text-red-800 text-xl font-sans w-60">Go back to dashboard
+                            class="block bg-white text-black font-bold transition duration-200 shadow hover:shadow-2xl ease-in-and-out rounded-lg mx-auto mt-16 px-2 py-4 text-xl font-sans w-60">Go back to dashboard
                     </a>
                         <br><br><br>
                     </div>

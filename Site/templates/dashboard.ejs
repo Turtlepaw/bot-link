@@ -27,73 +27,51 @@
                         </h1>
                         <p class="font-normal text-lg white">Welcome <%-user.username%> to the Bot Link dashboard!</p>
                         <br><br>
-                        <button onclick="openForm()"
-                            class="btn btn-sm btn-blue block bg-white text-black font-bold transition duration-200 shadow hover:shadow-2xl ease-in-and-out rounded-lg mx-auto mt-16 px-2 py-4 hover:text-red-800 text-xl font-sans w-60">Add
+                        <a href="#popup1"
+                            class="block bg-white text-black font-bold transition duration-200 shadow hover:shadow-2xl ease-in-and-out rounded-lg mx-auto mt-16 px-2 py-4 text-xl font-sans w-60">Add
                             bot
-                        </button>
+                    </a>
                         <br><br><br>
                     </div>
                 </div>
                 <div>
                 </div>
-                <div class="w-full mb-4 p-10">
-                    <center>
-                    <div class="form-popup" id="form">
-                        <center>
-                        <form action="/addedBot" class="form-container">
-                            <h1>Add bot</h1>
+                
+                <div id="popup1" class="overlay">
+                    <div class="popup">
+                        <form action="/addedBot">
+                            <h1 class="text-6xl font-bold align-middle">Add bot</h1><br>
 
                             <label for="guild"><b>Guild/Server</b></label>
                             <br>
                             <br>
                             <select name="guild" required>
-                                <% for(const guild of user.guilds.filter(e => e.permissions == 2147483647)) { %>
-                                    <option value="<%-guild.id%>"><%-guild.name%></option>
+                                <% for(const guild of user.guilds.filter(e => e.permissions == 2147483647 && isInGuild(e.id))) { %>
+                                    <option value="<%-guild.id%>"><%-guild.name.length >= 20 ? guild.name.slice(0, 20) + "..." : guild.name%></option>
                                 <% } %>
                             </select>
-                            <br><br>
+                            <br><br><br>
                             <label for="tag"><b>Bot Tag</b></label>
                             <br>
-                            <input type="text" placeholder="Enter Bot Tag" name="tag" required>
-                            <br>
+                            <input class="inputBar" type="text" placeholder="Enter Bot Tag" name="tag" required>
+                            <br><br><br>
                             <label for="private"><b>Private</b></label>
                             <br>
                             <select name="private" required>
-                                <option value="true">True</option>
                                 <option value="false">False</option>
+                                <option value="true">True</option>
                             </select>
                             <br><br><br>
-
-                            <button type="submit" class="btn btn-sm btn-blue block bg-white text-black font-bold transition duration-200 shadow hover:shadow-2xl ease-in-and-out rounded-lg mx-auto hover:text-red-800 text-xl font-sans w-60">Add Bot</button>
-                            <button type="button" class="btn btn-sm btn-blue block bg-white text-black font-bold transition duration-200 shadow hover:shadow-2xl ease-in-and-out rounded-lg mx-auto hover:text-red-800 text-xl font-sans w-60 cancel" onclick="closeForm()">Close</button>
+                            <a href="/addedBot"><button type="submit" class="btn-sm btn block text-black font-bold transition duration-200 shadow hover:shadow-2xl ease-in-and-out rounded-lg mx-auto text-xl font-sans w-60 confirmbtn">Add Bot</button></a>
+                            <br>
+                            <a href=""><button type="button" class="btn-sm btn block text-black font-bold transition duration-200 shadow hover:shadow-2xl ease-in-and-out rounded-lg mx-auto text-xl font-sans w-60 cancelbtn" onclick="closeForm()">Close</button></a>
                         </form>
-                    </center>
                     </div>
-                </center>
-
-                    <script>
-                        let popOn = false;
-                        function openForm() {
-                            if(popOn == true) {
-                                closeForm()
-                            } else {
-                                document.getElementById("form").style.display = "block";
-                                popOn = true;
-                            }
-                        }
-                        function closeForm() {
-                            if(popOn == false) {
-                                openForm()
-                            } else {
-                                document.getElementById("form").style.display = "none";
-                                popOn = false;
-                            }
-                        }
-                    </script>
+                </div>
                     <h1 class="text-6xl font-bold align-middle">Your Status Pages</h1>
                     <div class="links grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-10 align-middle text-center">
                         <% for(const bot of userBots){ %>
-                            <div class="sm:text-left link align-middle text-center">
+                            <div class="link align-middle text-center">
                                 <div class="w-full pd-tailwnd sm:w-1/2 p-4 sm:p-8"><img
                                         class="rounded-lg  mx-auto small-img"
                                         src="<%- bot.userReal.displayAvatarURL() %> "></div>

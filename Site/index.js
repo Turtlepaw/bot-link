@@ -88,12 +88,12 @@ module.exports = async (client) => {
         var pathname = url.parse(req.url).pathname;
         const bots = await require("../models/bot").find({ userID: req.user.id });
         const botArr = []
-        for(const bot of bots){
+        for (const bot of bots) {
             const BotUsr = await client.users.fetch(bot.botID);
             let MGuild;
-            for(let guild of await (await client.guilds.fetch()).values()){
+            for (let guild of await (await client.guilds.fetch()).values()) {
                 guild = await guild.fetch();
-                if(await (await guild.members.fetch(BotUsr.id)) != null){
+                if (await (await guild.members.fetch(BotUsr.id)) != null) {
                     MGuild = await guild.members.fetch(BotUsr.id)
                 }
             }
@@ -115,12 +115,15 @@ module.exports = async (client) => {
             image: `${domain}/logo.png`,
             name: client.user.username,
             tag: client.user.tag,
-            redirect: function(place){
+            redirect: function (place) {
                 res.redirect(place);
             },
             userBots: botArr,
             util: require("../utils/index"),
-            realUser: await client.users.fetch(req.user.id)
+            realUser: await client.users.fetch(req.user.id),
+            isInGuild: function (guild) {
+                return client.guilds.cache.has(guild);
+            }
         };
         res.render(path.resolve(`${templateDir}${path.sep}${template}`), Object.assign(baseData, data));
     };
@@ -211,7 +214,7 @@ module.exports = async (client) => {
 
     // Logout endpoint.
     app.get("/logout", async function (req, res) {
-        
+
         if (req.user) {
             const member = await client.users.fetch(req.user.id);
             if (member) {
@@ -245,33 +248,43 @@ module.exports = async (client) => {
     app.get("/addedBot", async (req, res) => {
         const users = await client.users.cache;
         let options = {
-            realBot: users.find(e => e.tag == req.query.tag),
+            realBot: users.find(e => e.tag == req.query.tag && e.bot),
             guild: await client.guilds.fetch(req.query.guild),
             private: Boolean(req.query.private),
             opResponse: "None",
         }
         await renderTemplate(res, req, "addedBot.ejs", Object.assign(options, {
             createBot: async () => {
-                if(!options.realBot || options.realBot == null) return console.log("I Could not find a bot with that tag.")
+                if (!options.realBot || options.realBot == null) {
+                    let txt = "I Could not find a bot with that tag."
+                    console.log(txt)
+                    return txt
+                }
                 const bot = require("../models/bot");
 
                 const BotFind = await bot.findOne({
                     botID: options.realBot.id
                 });
 
-                if(BotFind) return console.log("There's a bot already with that tag!")
-
-                await new bot({
-                    guildID: options.guild.id,
-                    botID: options.realBot.id,
-                    incidents: [],
-                    status: null,
-                    private: options.private||false,
-                    botName: options.realBot.username.toLowerCase(),
-                    userID: req.user.id
-                }).save().catch(console.log);
-
-                return console.log("Bot Created!")
+                if (BotFind) {
+                    let txt = "There's a bot already with that tag!"
+                    console.log(txt)
+                    return txt
+                } else {
+                    await new bot({
+                        guildID: options.guild.id,
+                        botID: options.realBot.id,
+                        incidents: [],
+                        status: null,
+                        private: options.private || false,
+                        botName: options.realBot.username.toLowerCase(),
+                        userID: req.user.id
+                    }).save().catch(console.log);
+    
+                    let txt = "Bot Created!"
+                    console.log(txt)
+                    return txt
+                }
             }
         }))
     })
@@ -288,7 +301,7 @@ module.exports = async (client) => {
         res.redirect(`https://discord.gg/GJDweTbJfG`)
     });
 
-    async function verifyAuth(auth){
+    async function verifyAuth(auth) {
 
     }
 
