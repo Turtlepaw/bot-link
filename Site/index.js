@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const moment = require('moment');
 const path = require("path");
+const favicon = require("serve-favicon");
 const session = require('express-session');
 const url = require("url");
 const partials = require('express-partials');
