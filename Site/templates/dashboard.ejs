@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="css/index.css">
+<link rel="stylesheet" href="css/tailwind.css">
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
 <% if(!user){ %>
@@ -7,7 +8,7 @@
             <div class="text-center text-black main-page">
                 <div class="pb-12 top">
                     <div name="navigation" class="navigation">
-                        <a href="/"><img src="logo.png" class="h-full rounded-full"></a>
+                        <a href="/"><img src="/assets/botlink.svg" class="h-full rounded-full"></a>
                         <div class="nav-links text-white font-semibold">
                             <a href="/invite" target="_blank" class="a cursor-pointer">Invite Bot</a><a
                                 href="/dashboard" class="a cursor-pointer">Dashboard</a><a href="/support"
@@ -39,23 +40,23 @@
                     <center>
                     <div class="form-popup" id="form">
                         <center>
-                        <form action="/action_page.php" class="form-container">
+                        <form action="/addedBot" class="form-container">
                             <h1>Add bot</h1>
 
                             <label for="guild"><b>Guild/Server</b></label>
                             <br>
                             <br>
-                            <select name="private" required>
+                            <select name="guild" required>
                                 <% for(const guild of user.guilds.filter(e => e.permissions == 2147483647)) { %>
                                     <option value="<%-guild.id%>"><%-guild.name%></option>
                                 <% } %>
                             </select>
                             <br><br>
-                            <label for="email"><b>Bot Tag</b></label>
+                            <label for="tag"><b>Bot Tag</b></label>
                             <br>
                             <input type="text" placeholder="Enter Bot Tag" name="tag" required>
                             <br>
-                            <label for="psw"><b>Private</b></label>
+                            <label for="private"><b>Private</b></label>
                             <br>
                             <select name="private" required>
                                 <option value="true">True</option>

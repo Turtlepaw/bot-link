@@ -35,6 +35,18 @@ code {
     justify-content: center
 }
 
+.endbutton {
+    background-color: #5865F2;
+    color: white;
+}
+
+.smtext-left {
+    text-align: left;
+}
+.smtext-right {
+    text-align: right;
+}
+
 .navigation {
     width: 90%;
     max-width: 60m;
@@ -140,6 +152,18 @@ a {
     cursor: pointer;
 }
 
+.logo\:title {
+    width: 30px;
+}
+
+.log\:small {
+    width: 15px;
+}
+
+.blurple {
+    color: #5865F2;
+}
+
 /* Popup Window */
 
 /* The popup form - hidden by default */
@@ -154,6 +178,10 @@ a {
     align-items: center;
     background: white;
     border-radius: 0.5rem;
+
+    position: relative;
+    margin: 0 auto;
+    top: 25%;
 }
   
   /* Add styles to the form container */
@@ -212,7 +240,7 @@ a {
 
 /* Tailwind but not tailwind */
 
-.mt-10 {
+/* .mt-10 {
     margin-top: 2.5rem;
 }
 .pb-12 {
@@ -290,4 +318,4 @@ a {
 .mx-auto {
     margin-left: auto;
     margin-right: auto;
-}
+} */

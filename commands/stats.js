@@ -36,6 +36,8 @@ const Config = module.exports = {
                 .setDescription(`${BotUsr.username} is \`${MGuild.presence?.status || "Status unknown"}\`.`)
                 .addField(`<:bl_idle:928358037104783380> Incidents:`, `${botFind.incidents.length > 0 ? botFind.incidents.map(e => `<:bl_idle:928358037104783380> ${e.reason || "No reason specified"}`).join("\n") : "No incidents recorded."}`)
                 .addField(`<:insights:928103000017354752> Guilds:`, `${botFind?.guilds || "Guilds not tracked"}`)
+                .addField(`<:insights:928103000017354752> Users:`, `${botFind?.users || "Users not tracked"}`)
+                .addField(`<:insights:928103000017354752> Uptime:`, `${botFind?.uptime || "Uptime not tracked"}`)
             ]
         });
     }

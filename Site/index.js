@@ -1,9 +1,10 @@
 //NPM packages
 const ejs = require("ejs");
+const GenUuid = require("uuid").v4;
 const express = require("express");
 const passport = require("passport");
 const MongoStore = require('connect-mongo');
-const { MessageEmbed, WebhookClient } = require("discord.js");
+const { MessageEmbed, WebhookClient, DiscordAPIError, Client } = require("discord.js");
 const Strategy = require("passport-discord").Strategy;
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
@@ -16,6 +17,7 @@ const partials = require('express-partials');
 //Local Files
 const Webhooks = require("./Config/webhooks.json");
 const { clientID, secret: clientSecret, mongoDB } = require("../config.json");
+const BotModel = require(".././models/bot");
 
 //Strings
 const domain = "http://localhost:4321";
@@ -33,6 +35,9 @@ const config = {
 const app = express();
 app.use(express.static(__dirname + '/static'));
 
+/**
+ * @param {Client} client
+ */
 module.exports = async (client) => {
     const dataDir = path.resolve(`${process.cwd()}${path.sep}Site`);
 
@@ -237,6 +242,40 @@ module.exports = async (client) => {
         });
     });
 
+    app.get("/addedBot", async (req, res) => {
+        const users = await client.users.cache;
+        let options = {
+            realBot: users.find(e => e.tag == req.query.tag),
+            guild: await client.guilds.fetch(req.query.guild),
+            private: Boolean(req.query.private),
+            opResponse: "None",
+        }
+        await renderTemplate(res, req, "addedBot.ejs", Object.assign(options, {
+            createBot: async () => {
+                if(!options.realBot || options.realBot == null) return console.log("I Could not find a bot with that tag.")
+                const bot = require("../models/bot");
+
+                const BotFind = await bot.findOne({
+                    botID: options.realBot.id
+                });
+
+                if(BotFind) return console.log("There's a bot already with that tag!")
+
+                await new bot({
+                    guildID: options.guild.id,
+                    botID: options.realBot.id,
+                    incidents: [],
+                    status: null,
+                    private: options.private||false,
+                    botName: options.realBot.username.toLowerCase(),
+                    userID: req.user.id
+                }).save().catch(console.log);
+
+                return console.log("Bot Created!")
+            }
+        }))
+    })
+
     app.get("/dashboard", async (req, res) => {
         await renderTemplate(res, req, "dashboard.ejs", {});
     });
@@ -244,6 +283,31 @@ module.exports = async (client) => {
     app.get("/invite", async (req, res) => {
         res.redirect(`https://discord.com/api/oauth2/authorize?client_id=928073786035687454&permissions=280576&redirect_uri=https%3A%2F%2Fblink.trtle.xyz%2Flogin&response_type=code&scope=identify%20guilds%20applications.commands%20bot`)
     });
+
+    app.get("/support", async (req, res) => {
+        res.redirect(`https://discord.gg/GJDweTbJfG`)
+    });
+
+    async function verifyAuth(auth){
+
+    }
+
+    // app.post("/api/set/guilds", async (req, res) => {
+    //     const Auth = req.params.auth;
+
+    //     const AuthDone = await verifyAuth(Auth);
+
+    //     const BotFind = await BotModel.findOne({
+    //         authToken: Auth
+    //     });
+
+    //     BotFind.guilds = req.query.guilds
+
+    //     await BotFind.save().catch(console.log);
+
+    //     res.status(200);
+    //     res.send("Request Completed")
+    // })
 
     app.listen(4321, null, null, () => console.log(`Dashboard is up and running on port 4321`));
 }
