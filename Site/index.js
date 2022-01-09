@@ -15,7 +15,7 @@ const url = require("url");
 const partials = require('express-partials');
 
 //Local Files
-const Webhooks = require("./Config/webhooks.json");
+const Webhooks = require("./Config/hook.json");
 const { clientID, secret: clientSecret, mongoDB } = require("../config.json");
 const BotModel = require(".././models/bot");
 
