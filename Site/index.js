@@ -29,7 +29,7 @@ const config = {
     "verification": "",
     "description": "🔗 Just some random bot on Discord that can provide stats, downtime, and guild count for your bots!", //description
     "https": "https://", // leave as is
-    "port": "5003",
+    "port": "4321",
 }
 
 const app = express();
