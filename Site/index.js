@@ -10,7 +10,6 @@ const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
 const moment = require('moment');
 const path = require("path");
-const favicon = require("serve-favicon");
 const session = require('express-session');
 const url = require("url");
 const partials = require('express-partials');
@@ -28,7 +27,7 @@ const secret = clientSecret;
 const loginLogs = new WebhookClient({ url: Webhooks.login });
 const config = {
     "verification": "",
-    "description": "Slash Link is a url shortner for any url!", //description
+    "description": "🔗 Just some random bot on Discord that can provide stats, downtime, and guild count for your bots!", //description
     "https": "https://", // leave as is
     "port": "5003",
 }
@@ -87,7 +86,7 @@ module.exports = async (client) => {
     const renderTemplate = async (res, req, template, data = {}) => {
         var hostname = req.headers.host;
         var pathname = url.parse(req.url).pathname;
-        const bots = await require("../models/bot").find({ userID: req.user.id });
+        const bots = await require("../models/bot").find({ userID: req.user?.id });
         const botArr = []
         for (const bot of bots) {
             const BotUsr = await client.users.fetch(bot.botID);
@@ -121,7 +120,7 @@ module.exports = async (client) => {
             },
             userBots: botArr,
             util: require("../utils/index"),
-            realUser: await client.users.fetch(req.user.id),
+            realUser: req.isAuthenticated() ? await client.users.fetch(req.user.id) : null,
             isInGuild: function (guild) {
                 return client.guilds.cache.has(guild);
             }
@@ -240,10 +239,7 @@ module.exports = async (client) => {
     });
 
     app.get("/", async (req, res) => {
-        var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-        await renderTemplate(res, req, "index.ejs", {
-            urlSite: fullUrl
-        });
+        await renderTemplate(res, req, "index.ejs", {});
     });
 
     app.get("/addedBot", async (req, res) => {
@@ -303,25 +299,80 @@ module.exports = async (client) => {
     });
 
     async function verifyAuth(auth) {
-
+        return true
     }
 
-    // app.post("/api/set/guilds", async (req, res) => {
-    //     const Auth = req.params.auth;
+    app.post("/api/set/guilds", async (req, res) => {
+        const Auth = req.params.auth;
 
-    //     const AuthDone = await verifyAuth(Auth);
+        const AuthDone = await verifyAuth(Auth);
+        if(AuthDone == false) return
 
-    //     const BotFind = await BotModel.findOne({
-    //         authToken: Auth
-    //     });
+        const BotFind = await BotModel.findOne({
+            authToken: Auth,
+            botID: req.query.bot
+        });
 
-    //     BotFind.guilds = req.query.guilds
+        if(!BotFind) {
+            res.status(404)
+            return res.send("Bot not found")
+        }
 
-    //     await BotFind.save().catch(console.log);
+        BotFind.guilds = req.query.guilds
 
-    //     res.status(200);
-    //     res.send("Request Completed")
-    // })
+        await BotFind.save().catch(console.log);
+
+        res.status(200);
+        res.send("Request Completed")
+    });
+
+    app.post("/api/set/users", async (req, res) => {
+        const Auth = req.params.auth;
+
+        const AuthDone = await verifyAuth(Auth);
+        if(AuthDone == false) return
+
+        const BotFind = await BotModel.findOne({
+            authToken: Auth,
+            botID: req.query.bot
+        });
+
+        if(!BotFind) {
+            res.status(404)
+            return res.send("Bot not found")
+        }
+
+        BotFind.users = req.query.users
+
+        await BotFind.save().catch(console.log);
+
+        res.status(200);
+        res.send("Request Completed")
+    });
+
+    app.post("/api/set/uptime", async (req, res) => {
+        const Auth = req.params.auth;
+
+        const AuthDone = await verifyAuth(Auth);
+        if(AuthDone == false) return
+
+        const BotFind = await BotModel.findOne({
+            authToken: Auth,
+            botID: req.query.bot
+        });
+
+        if(!BotFind) {
+            res.status(404)
+            return res.send("Bot not found")
+        }
+
+        BotFind.uptime = req.query.uptime
+
+        await BotFind.save().catch(console.log);
+
+        res.status(200);
+        res.send("Request Completed")
+    });
 
     app.listen(4321, null, null, () => console.log(`Dashboard is up and running on port 4321`));
 }
