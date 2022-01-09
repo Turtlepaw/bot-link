@@ -1,6 +1,6 @@
 # **Bot Link**
 
-<style>
+<!-- <style>
     .gr {
     color: transparent;
     background-image: linear-gradient(90deg,#E1AD01, #ffca1b);
@@ -13,7 +13,7 @@
     -webkit-background-clip: text;
     background-clip: text;
     }   
-</style>
+</style> -->
 # **Create <span class="gr">Status Pages</span> for your bot**
 **Unlimited status pages all for <span class="gr2">free</span>**
 
